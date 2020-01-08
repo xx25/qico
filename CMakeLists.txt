@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.8.6)
 
 project (qico C)
 
+set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
+
+option(WITH_TESTS "Build tests" OFF)
+
 include(CheckTypeSize)
 include(CheckIncludeFiles)
 include(CheckIncludeFile)
@@ -56,10 +60,15 @@ include(FindCurses)
 include(FindPerlLibs)
 if (${PERLLIBS_FOUND})
 	set(WITH_PERL 1)
+	add_definitions(-Doff64_t=__off64_t)
 	include_directories(${PERL_INCLUDE_PATH})
 endif (${PERLLIBS_FOUND})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.cmake.h ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_subdirectory(src)
-#add_subdirectory(tests)
+if (${WITH_TESTS})
+ include(CTest)
+     enable_testing()
+ add_subdirectory(tests)
+endif()
 
