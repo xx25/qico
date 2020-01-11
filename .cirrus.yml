@@ -1,0 +1,14 @@
+freebsd_instance:
+  image_family: freebsd-12-1
+
+task:
+  install_script:
+  - pkg install -y cmake perl5 bison flex cmocka
+  script:
+  - mkdir build
+  - cd build
+  - cmake .. -DWITH_TESTS=1
+  - cmake --build .
+  test_script:
+  - cd build
+  - ctest
