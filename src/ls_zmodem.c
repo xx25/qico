@@ -412,7 +412,7 @@ int ls_zrecvhdr(byte *hdr, int *hlen, int timeout)
                     crc = LTOH(crc);
                     ls_Protocol |= LSZ_OPTCRC32;
                 }
-                DEBUG(('Z',2,"ls_zrecvhdr: CRC%d got %08x, claculated %08x",(2==crcl)?16:32,incrc,crc));
+                DEBUG(('Z',2,"ls_zrecvhdr: CRC%d got %08x, calculated %08x",(2==crcl)?16:32,incrc,crc));
                 if (incrc != crc) {
                     return LSZ_BADCRC;
                 }
@@ -610,7 +610,7 @@ int ls_zrecvdata16(byte *data, int *len, int timeout)
     crc |= (unsigned char)c;
     crc = STOH(crc);
     incrc = LSZ_FINISH_CRC16(incrc);
-    DEBUG(('Z',2,"ls_zrecvdata16: CRC16 got %04x, claculated %04x",incrc,crc));
+    DEBUG(('Z',2,"ls_zrecvdata16: CRC16 got %04x, calculated %04x",incrc,crc));
 
     if (incrc != crc) {
         return LSZ_BADCRC;
@@ -685,7 +685,7 @@ int ls_zrecvdata32(byte *data, int *len, int timeout)
     crc |= (unsigned long)c << 0x18;
     crc = LTOH(crc);
     incrc = LSZ_FINISH_CRC32(incrc);
-    DEBUG(('Z',2,"ls_zrecvdata32: CRC32 got %08x, claculated %08x",incrc,crc));
+    DEBUG(('Z',2,"ls_zrecvdata32: CRC32 got %08x, calculated %08x",incrc,crc));
 
     if (incrc != crc) {
         return LSZ_BADCRC;
