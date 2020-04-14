@@ -207,7 +207,8 @@ int ls_zrecvhdr(byte *hdr, int *hlen, int timeout)
         rhBYTE,
         rhCRC,
         rhCR,
-        rhLF
+        rhLF,
+        rhXON
     } state = rhInit;
     static enum rhREADMODE {
         rm8BIT,
@@ -368,7 +369,7 @@ int ls_zrecvhdr(byte *hdr, int *hlen, int timeout)
             state = rhBYTE;
             break;
         case rhBYTE:
-            DEBUG(('Z',2,"ls_zrecvhdr: rhBYTE: %02x",c));
+            DEBUG(('Z',2,"ls_zrecvhdr: rhBYTE: %02x (%d)",c,got));
             hdr[got] = c;
             if(++got == len) {
                 state = rhCRC;
@@ -435,6 +436,11 @@ int ls_zrecvhdr(byte *hdr, int *hlen, int timeout)
                 break;
             case LF:
             case LF|0x80:		/* Ok, UNIX-like EOL */
+                state = rhXON;
+                break;
+            case XON:
+            case XON|0x80:
+                DEBUG(('Z',1,"ls_zrecvhdr: rhCR, got XON without CR/LF?"));
                 return frametype;
             default:
                 return LSZ_BADCRC;
@@ -446,8 +452,27 @@ int ls_zrecvhdr(byte *hdr, int *hlen, int timeout)
             switch(c) {
             case LF:
             case LF|0x80:
+                state = rhXON;
+                break;
+            default:
+                return LSZ_BADCRC;
+            }
+            break;
+        case rhXON:
+            state = rhInit;
+            DEBUG(('Z',2,"ls_zrecvhdr: rhXON"));
+            switch(c) {
+            case ZPAD:
+            case ZPAD|0x80:
+                state = rhZPAD;
+                got = 0;
+                crcgot = 0;
+                break;
+            case XON:
+            case XON|0x80:
                 return frametype;
             default:
+                DEBUG(('Z',2,"ls_zrecvdata: rhXON unexpcted %x (%c)",c,(char)c));
                 return LSZ_BADCRC;
             }
             break;
