@@ -432,8 +432,8 @@ int ls_zrecvhdr(byte *hdr, int *hlen, int timeout)
             switch(c) {
             case CR:
             case CR|0x80:		/* we need LF after <CR> */
-                state = rhLF;
-                break;
+                DEBUG(('Z',2,"ls_zrecvhdr: rhCR, ignoring any remaining chars."));
+                return frametype;	/* At this point, most implementations ignore checking for the remaining chars */
             case LF:
             case LF|0x80:		/* Ok, UNIX-like EOL */
                 state = rhXON;
