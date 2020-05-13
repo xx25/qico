@@ -221,10 +221,10 @@ static int xsendget(int sock,char *buf,size_t len)
 
 int main(int argc, char **argv,char **envp)
 {
-    int action=-1, kfs=0, len=0,lkfs,rc=1;
+    int action=-1, kfs=0, len=0,lkfs,rc=1,c;
     char filename[MAX_PATH];
     unsigned char digest[16]= {0};
-    char c,*str=NULL,flv='?',*port=NULL,*addr=NULL,*tty=NULL,*pwd=NULL;
+    char *str=NULL,flv='?',*port=NULL,*addr=NULL,*tty=NULL,*pwd=NULL;
     struct stat filestat;
 #ifdef HAVE_SETLOCALE
     setlocale(LC_ALL, "C");
