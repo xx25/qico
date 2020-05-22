@@ -46,10 +46,8 @@ binary-arch: build
 	dh_testroot
 	dh_installdirs -a
 	dh_install -a
-	dh_installman -pqico man/qctl.8 man/qico.8
 	dh_link -pqico usr/share/doc/qico-common usr/share/doc/qico 
-	dh_installman -pqico-qcc man/qctl.8 man/qico.8 man/qcc.8
-	dh_link -pqico-qcc usr/share/doc/qico-common usr/share/doc/qico-qcc
+	dh_installman -pqico man/qctl.8 man/qico.8 man/qcc.8
 	dh_strip -a
 	dh_compress -a
 	dh_fixperms -a
