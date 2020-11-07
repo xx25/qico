@@ -5,6 +5,7 @@
 
 #define RETSIGTYPE void
 #define WITH_BINKP 1
+#define YYTEXT_POINTER 1
 
 #cmakedefine STDC_HEADERS @STDC_HEADERS@
 #cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
