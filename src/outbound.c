@@ -485,7 +485,7 @@ static int out_bso_scan_zone(char *zonehold)
         return 0;
     }
 
-    p = strrchr( zonehold, ':' );
+    p = strrchr( zonehold, '.' );
     if ( p != NULL) {
         sscanf( p, ".%03x", &i );
         a.z = (short) i;
