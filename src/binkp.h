@@ -61,7 +61,7 @@ enum {
     BPM_CHAT,			/* For chat */
     BPM_MIN = BPM_NUL,		/* Minimal message type value */
     BPM_MAX = BPM_CHAT		/* Maximal message type value */
-} bp_msg;
+};
 
 
 typedef struct _BP_MSG BPMSG;
