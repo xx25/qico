@@ -476,7 +476,7 @@ static int out_bso_scan_zone(char *zonehold)
     char		*p = NULL, **namelist = NULL;
     FTNADDR_T	( a );
 
-    DEBUG(('S',3,"out_bso_scan_zone: %s", zonehold));
+    DEBUG(('S',3,"out_bso_scan_zone (zonehold): %s", zonehold));
 
     n = qscandir( zonehold, &namelist, 0, bso_select, qalphasort );
     DEBUG(('S',4,"out_bso_scan_zone: n == %d", n));
@@ -485,7 +485,7 @@ static int out_bso_scan_zone(char *zonehold)
         return 0;
     }
 
-    p = strrchr( zonehold, ':' );
+    p = strrchr( zonehold, '.' );
     if ( p != NULL) {
         sscanf( p, ".%03x", &i );
         a.z = (short) i;
