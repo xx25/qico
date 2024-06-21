@@ -1531,9 +1531,9 @@ static int getmessages(char *bbx)
 
 int main(int argc, char **argv, char **envp)
 {
-    int len,ch,rc;
+    int len,ch,rc,c;
     struct tm *tt;
-    char buf[4096],*bf,c,*port=NULL,*addr=NULL,*pwd=NULL;
+    char buf[4096],*bf,*port=NULL,*addr=NULL,*pwd=NULL;
     unsigned char digest[16]= {0};
     fd_set rfds;
     time_t tim;

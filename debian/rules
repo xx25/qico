@@ -1,36 +1,27 @@
 #!/usr/bin/make -f
 
-configure-options := --prefix=/usr --sysconfdir=/etc/qico --disable-notify --enable-hydra8k
+configure-options := --prefix=/usr --sysconfdir=/etc/qico --disable-notify --enable-hydra8k --enable-perl --with-config=/etc/qico/qico.conf
 
 TMPDIR := $(CURDIR)/debian/tmp
 
-build: build-stamp-qico build-stamp-qico-qcc
+build: build-stamp-qico
 
 build-stamp-qico:
 	dh_testdir
 	[ -d $(TMPDIR)/qico ] || mkdir -p $(TMPDIR)/qico
-	./configure $(configure-options) --disable-qcc
+	./autogen.sh
+	./configure $(configure-options)
 	$(MAKE)
 	cp src/qico $(TMPDIR)/qico
 	cp src/qctl $(TMPDIR)/qico
+	cp src/qcc $(TMPDIR)/qico
 
 	touch build-stamp-qico
-
-build-stamp-qico-qcc:
-	dh_testdir
-	[ -d $(TMPDIR)/qico-qcc ] || mkdir $(TMPDIR)/qico-qcc
-	./configure $(configure-options)
-	$(MAKE)
-	cp src/qico $(TMPDIR)/qico-qcc
-	cp src/qctl $(TMPDIR)/qico-qcc
-	cp src/qcc $(TMPDIR)/qico-qcc
-
-	touch build-stamp-qico-qcc
 
 clean:	
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp-qico build-stamp-qico-qcc
+	rm -f build-stamp-qico
 	rm -rf $(TMPDIR)
 	[ ! -f Makefile ] || $(MAKE) distclean
 	dh_clean
@@ -55,10 +46,8 @@ binary-arch: build
 	dh_testroot
 	dh_installdirs -a
 	dh_install -a
-	dh_installman -pqico man/qctl.8 man/qico.8
 	dh_link -pqico usr/share/doc/qico-common usr/share/doc/qico 
-	dh_installman -pqico-qcc man/qctl.8 man/qico.8 man/qcc.8
-	dh_link -pqico-qcc usr/share/doc/qico-common usr/share/doc/qico-qcc
+	dh_installman -pqico man/qctl.8 man/qico.8 man/qcc.8
 	dh_strip -a
 	dh_compress -a
 	dh_fixperms -a

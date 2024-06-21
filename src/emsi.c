@@ -253,15 +253,15 @@ static int emsi_parsedat(char *str, ninfo_t *dat)
         return 0;
     }
 
-    sscanf( str + 10, "%04X", (unsigned *) &l );
+    sscanf( str + 10, "%04zX", &l );
     if ( l != ( l1 = strlen( str ) - 18 )) {
-        write_log( "Bad EMSI_DAT length: %u, should be: %u!", l, l1 );
+        write_log( "Bad EMSI_DAT length: %zu, should be: %zu!", l, l1 );
         return 0; /* Bad EMSI length */
     }
 
     DEBUG(('E',5,"EMSI_DAT length (%d) is OK!", l ));
 
-    sscanf( str + strlen( str ) - 4, "%04X", &l);
+    sscanf( str + strlen( str ) - 4, "%04zX", &l);
     if ( l != ( l1 = crc16usd( (UINT8 *) str + 2, strlen( str ) - 6 ))) {
         write_log( "Bad EMSI_DAT CRC: %04X, should be: %04X!", l, l1 );
         return 0; /* Bad EMSI CRC */
@@ -584,7 +584,7 @@ void emsi_makedat(ftnaddr_t *remaddr, unsigned long mail, unsigned long files,
     EMSI_CAT( "}" );
 
     /* Calculate emsi length */
-    snprintf( tmp, TMP_LEN, "%04X", strlen( emsi_dat ) - 14 );
+    snprintf( tmp, TMP_LEN, "%04zX", strlen( emsi_dat ) - 14 );
     memcpy( emsi_dat + 10, tmp, 4 );
 
     /* EMSI crc16 */

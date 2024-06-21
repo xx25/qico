@@ -27,7 +27,7 @@ int zmodem_sendfile(char *tosend, char *sendas, unsigned long *totalleft, unsign
         rc = ls_zsendfile(&f,ls_SerialNum++);
         (*totalleft)-=sendf.ftot;
         (*filesleft)--;
-        DEBUG(('Z',1,"zmodem_sendfile: %d, %s",rc,LSZ_FRAMETYPES[rc+LSZ_FTOFFSET]));
+        DEBUG(('Z',2,"zmodem_sendfile: %d, %s",rc,LSZ_FRAMETYPES[rc+LSZ_FTOFFSET]));
         switch(rc) {
         case LSZ_OK:
             txclose(&txfd,FOP_OK);
@@ -54,7 +54,7 @@ int zmodem_sendinit(int canzap)
 {
     int rc;
     int opts = LSZ_OPTCRC32|LSZ_OPTSKIPGUARD;
-    DEBUG(('Z',1,"zmodem_sendinit: %s",canzap==2?"DirZap":canzap?"ZedZap":"ZModem"));
+    DEBUG(('Z',2,"zmodem_sendinit: %s",canzap==2?"DirZap":canzap?"ZedZap":"ZModem"));
     switch(canzap) {
     case 2:
         opts |= LSZ_OPTDIRZAP;
@@ -65,7 +65,7 @@ int zmodem_sendinit(int canzap)
     case 0:
         break;
     default:
-        DEBUG(('Z',1,"zmodem_sendinit: strange canzap: %d",canzap));
+        DEBUG(('Z',3,"zmodem_sendinit: strange canzap: %d",canzap));
         break;
     }
     if((rc=ls_zinitsender(opts,effbaud,cfgi(CFG_ZTXWIN),NULL))<0) {
@@ -82,7 +82,7 @@ int zmodem_sendinit(int canzap)
 /* Done sending */
 int zmodem_senddone()
 {
-    DEBUG(('Z',1,"zmodem_senddone"));
+    DEBUG(('Z',2,"zmodem_senddone"));
     xfree(txbuf);
     return ls_zdonesender();
 }
@@ -94,7 +94,7 @@ int zmodem_receive(char *c, int canzap)
     int frame = ZRINIT;
     int opts = LSZ_OPTCRC32|LSZ_OPTSKIPGUARD;
 
-    DEBUG(('Z',1,"zmodem_receive"));
+    DEBUG(('Z',2,"zmodem_receive"));
     switch(canzap & 0x00FF) {
     case 2:
         opts |= LSZ_OPTDIRZAP;
@@ -105,7 +105,7 @@ int zmodem_receive(char *c, int canzap)
     case 0:
         break;
     default:
-        DEBUG(('Z',1,"zmodem_receive: strange canzap: %d",canzap));
+        DEBUG(('Z',3,"zmodem_receive: strange canzap: %d",canzap));
         break;
     }
     if(canzap & 0x0100) {
@@ -114,17 +114,17 @@ int zmodem_receive(char *c, int canzap)
 
     switch((rc=ls_zinitreceiver(opts,effbaud,cfgi(CFG_ZRXWIN),&f))) {
     case ZFIN:
-        DEBUG(('Z',2,"zmodem_receive: ZFIN after INIT, empty batch"));
+        DEBUG(('Z',3,"zmodem_receive: ZFIN after INIT, empty batch"));
         ls_zdonereceiver();
         return LSZ_OK;
     case ZFILE:
-        DEBUG(('Z',2,"zmodem_receive: ZFILE after INIT"));
+        DEBUG(('Z',3,"zmodem_receive: ZFILE after INIT"));
         break;
     default:
         /*
-        DEBUG(('Z',1,"zmodem_receive: something strange after init: %d, %s",rc,LSZ_FRAMETYPES[rc+LSZ_FTOFFSET]));
+        DEBUG(('Z',3,"zmodem_receive: something strange after init: %d, %s",rc,LSZ_FRAMETYPES[rc+LSZ_FTOFFSET]));
                       */
-        DEBUG(('Z',1,"zmodem_receive: something strange after init: rc=%ld",rc));
+        DEBUG(('Z',3,"zmodem_receive: something strange after init: rc=%ld",rc));
         ls_zabort();
         ls_zdonereceiver();
         return LSZ_ERROR;
@@ -137,7 +137,7 @@ int zmodem_receive(char *c, int canzap)
     while(1) {
         switch(rc) {
         case ZFIN:
-            DEBUG(('Z',2,"zmodem_receive: ZFIN"));
+            DEBUG(('Z',3,"zmodem_receive: ZFIN"));
             ls_zdonereceiver();
             return LSZ_OK;
         case ZFILE:
@@ -147,34 +147,34 @@ int zmodem_receive(char *c, int canzap)
             } else {
                 switch(rxopen(f.name,f.mtime,f.size,&rxfd)) {
                 case FOP_SKIP:
-                    DEBUG(('Z',2,"zmodem_receive: SKIP %s",f.name));
+                    DEBUG(('Z',3,"zmodem_receive: SKIP %s",f.name));
                     frame = ZSKIP;
                     break;
                 case FOP_SUSPEND:
-                    DEBUG(('Z',2,"zmodem_receive: SUSPEND %s",f.name));
+                    DEBUG(('Z',3,"zmodem_receive: SUSPEND %s",f.name));
                     frame = ZFERR;
                     break;
                 case FOP_CONT:
                 case FOP_OK:
-                    DEBUG(('Z',2,"zmodem_receive: OK %s from %d",f.name,recvf.soff));
+                    DEBUG(('Z',1,"zmodem_receive: OK %s from %d",f.name,recvf.soff));
                     frame = ZRINIT;
                     switch((rc=ls_zrecvfile(recvf.soff))) {
                     case ZFERR:
-                        DEBUG(('Z',2,"zmodem_receive: ZFERR"));
+                        DEBUG(('Z',3,"zmodem_receive: ZFERR"));
                         rxclose(&rxfd,FOP_SUSPEND);
                         frame = ZFERR;
                         break;
                     case ZSKIP:
-                        DEBUG(('Z',2,"zmodem_receive: ZSKIP"));
+                        DEBUG(('Z',3,"zmodem_receive: ZSKIP"));
                         rxclose(&rxfd,FOP_SKIP);
                         frame = ZSKIP;
                         break;
                     case LSZ_OK:
-                        DEBUG(('Z',2,"zmodem_receive: OK"));
+                        DEBUG(('Z',3,"zmodem_receive: OK"));
                         rxclose(&rxfd,FOP_OK);
                         break;
                     default:
-                        DEBUG(('Z',1,"zmodem_receive: OTHER %d",rc));
+                        DEBUG(('Z',3,"zmodem_receive: OTHER %d",rc));
                         rxclose(&rxfd,FOP_ERROR);
                         return LSZ_ERROR;
                     }
@@ -183,15 +183,15 @@ int zmodem_receive(char *c, int canzap)
             }
             break;
         case ZABORT:
-            DEBUG(('Z',1,"zmodem_receive: ABORT"));
+            DEBUG(('Z',3,"zmodem_receive: ABORT"));
             ls_zabort();
             ls_zdonereceiver();
             return LSZ_ERROR;
         default:
             /*
-            DEBUG(('Z',1,"zmodem_receive: something strange: %d, %s ",rc,LSZ_FRAMETYPES[rc+LSZ_FTOFFSET]));
+            DEBUG(('Z',3,"zmodem_receive: something strange: %d, %s ",rc,LSZ_FRAMETYPES[rc+LSZ_FTOFFSET]));
                                  */
-            DEBUG(('Z',1,"zmodem_receive: something strange: rc=%ld",rc));
+            DEBUG(('Z',3,"zmodem_receive: something strange: rc=%ld",rc));
             ls_zabort();
             ls_zdonereceiver();
             return LSZ_ERROR;

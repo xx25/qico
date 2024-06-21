@@ -20,7 +20,6 @@ Description: FTN compatible mailer with many features
 Package: qico
 Architecture: any
 Depends: qico-common, ${shlibs:Depends}
-Conflicts: qico-qcc
 Description: FTN compatible mailer with many features
  It includes such features as: dynamic configuration, color ncurses
  frontend, chat, outbound manager, perl. Supported emsi and
@@ -29,15 +28,3 @@ Description: FTN compatible mailer with many features
  .
  This binary package is built without frontend support, good for
  servers.
-
-Package: qico-qcc
-Architecture: any
-Depends: qico-common, ${shlibs:Depends}
-Conflicts: qico
-Description: FTN compatible mailer with many features
- It includes such features as: dynamic configuration, color ncurses
- frontend, chat, outbound manager, perl. Supported emsi and
- binkp protocols over modem and(or) tcp/ip. It uses Binkley
- and Amiga-style outbounds.
- .
- This is a full version with frontend support.

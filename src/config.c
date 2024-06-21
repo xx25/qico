@@ -596,6 +596,11 @@ void rereadconfig(int client)
         exit( S_FAILURE );
     }
 
+    if (! cfgal(CFG_ADDRESS)) {
+        write_log("No addresses defined");
+        exit( S_FAILURE );
+    }
+
     if ( outbound_init( cfgs( CFG_ASOOUTBOUND ), cfgs( CFG_BSOOUTBOUND ),
                         cfgs( CFG_QSTOUTBOUND ), cfgal( CFG_ADDRESS )->addr.z ) == 0 ) {
 
