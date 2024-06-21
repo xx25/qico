@@ -1,0 +1,16 @@
+*.o
+*.core
+qico
+qcc
+qctl
+qconf.h
+qconf.c
+flagexp.c
+flagexp.h
+flaglex.c
+ver.c
+ver.h
+Makefile
+Makefile.in
+.deps
+cscope.out
